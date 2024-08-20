@@ -16,8 +16,7 @@ import {
   updateUserStart,
 } from "../redux/User/UserSlice";
 import { useDispatch } from "react-redux";
-import { Link } from 'react-router-dom';
-
+import { Link } from "react-router-dom";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -27,9 +26,8 @@ const Profile = () => {
   const [file, setFile] = useState(null);
   const [filePerc, setFilePerc] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
-  const [formData, setFormData] = useState({
-  
-  });
+  const [formData, setFormData] = useState({});
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
@@ -51,6 +49,7 @@ const Profile = () => {
       },
       (error) => {
         setFileUploadError(true);
+        console.log(error);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) =>
@@ -146,9 +145,12 @@ const Profile = () => {
           Update
         </button>
         {/* \end{code} */}
-<Link className="bg-green-500 text-white rounded-lg uppercase text-center p-3 mt-3 hover:opacity-85" to={"/create-listing"}>
-create-listing
-</Link>
+        <Link
+          className="bg-green-500 text-white rounded-lg uppercase text-center p-3 mt-3 hover:opacity-85"
+          to={"/create-listing"}
+        >
+          create-listing
+        </Link>
       </form>
       <div className="flex justify-between mt-5">
         <span className="text-red-700 cursor-pointer">Delete Account</span>

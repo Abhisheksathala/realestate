@@ -2,7 +2,6 @@ import express from "express";
 import {
   Login,
   Register,
-  Update,
   Delete,
   google,
 } from "./../Controllers/UserController.js";

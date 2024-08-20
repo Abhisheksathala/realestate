@@ -88,7 +88,7 @@ const Login = async (req, res) => {
       expiresIn: "1h",
     });
     const { password: pass, ...rest } = user._doc;
-    res.cookie('access_token',token,{httpOnly:true}).status(200).json({
+    res.cookie("access_token", token, { httpOnly: true }).status(200).json({
       message: "Login successful",
       success: true,
       user: rest,
@@ -105,34 +105,38 @@ const google = async (req, res) => {
     const user = await userModel.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
       const { password, ...rest } = user._doc;
-      res.cookie('access_token', token, { httpOnly: true })
-        .status(200)
-        .json({
-          message: "Login successful",
-          success: true,
-          user: rest,
-        });
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json({
+        message: "Login successful",
+        success: true,
+        user: rest,
+      });
     } else {
-      const generatePassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+      const generatePassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
       const hashedPassword = await bcrypt.hash(generatePassword, 10);
       const newUser = new userModel({
-        name: name.split(" ").join(" ").toLowerCase() + Math.random().toString(36).slice(-4),
+        name:
+          name.split(" ").join(" ").toLowerCase() +
+          Math.random().toString(36).slice(-4),
         email,
         password: hashedPassword,
         avatar: photo,
       });
       await newUser.save();
-      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
       const { password, ...rest } = newUser._doc;
-      res.cookie('access_token', token, { httpOnly: true })
-        .status(200)
-        .json({
-          message: "Login successful",
-          success: true,
-          user: rest,
-        });
+      res.cookie("access_token", token, { httpOnly: true }).status(200).json({
+        message: "Login successful",
+        success: true,
+        user: rest,
+      });
     }
   } catch (error) {
     console.error(error);
@@ -143,8 +147,32 @@ const google = async (req, res) => {
   }
 };
 
-const Update = async (req, res) => {};
+const getUserListings = async (req, res) => {
+  try {
+    // Check if the user is trying to access their own account
+    if (req.user.id !== req.params.id) {
+      return res.status(401).json("You can update only your account"); // Add return to prevent further execution
+    }
+
+    // Fetch user from the database
+    const user = await userModel.find({ userRef: req.params.id });
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json("User not found"); // Add return to prevent further execution
+    }
+
+    // Send user data in the response
+    return res.status(200).json(user);
+  } catch (error) {
+    // Log the error for debugging
+    console.error("Error fetching user listings:", error);
+
+    // Send internal server error response
+    return res.status(500).json("Internal server error");
+  }
+};
 
 const Delete = async (req, res) => {};
 
-export { Login, Register, Update, Delete,google };
+export { Login, Register, getUserListings, Delete, google };

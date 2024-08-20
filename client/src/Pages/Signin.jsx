@@ -86,7 +86,11 @@ const Signin = () => {
           </Link>
         </p>
       </div>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && (
+        <p className="text-red-500">
+          {typeof error === "string" ? error : "An error occurred"}
+        </p>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import express from "express";
 import { CreateListing } from "../Controllers/ListControllers.js";
-import verifyToken from "../Utiles/verifyuser.js";
+import verifyToken from "../Utiles/.jverifyToken.js";
 
 const listingRouter = express.Router();
 

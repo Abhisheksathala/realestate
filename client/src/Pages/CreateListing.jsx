@@ -51,9 +51,10 @@ const CreateListing = () => {
           setImageUploadError(false);
           setUploading(false);
         })
-        .catch((err) => {
+        .catch((error) => {
           setImageUploadError("Image upload failed (2 mb max per image)");
           setUploading(false);
+          console.log(error);
         });
     } else {
       setImageUploadError("You can only upload 6 images per listing");
@@ -94,13 +95,21 @@ const CreateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      if (formData.imageUrls.length < 1)
+      // Validation checks
+      if (formData.imageUrls.length < 1) {
         return setError("You must upload at least one image");
-      if (+formData.regularPrice < +formData.discountedPrice)
+      }
+      if (+formData.regularPrice < +formData.discountedPrice) {
         return setError("Discount price must be lower than regular price");
+      }
+
+      // Reset states
       setLoading(true);
       setError(null);
+
+      // Sending POST request
       const res = await fetch("/api/listing/create", {
         method: "POST",
         headers: {
@@ -111,21 +120,21 @@ const CreateListing = () => {
           user: currentUser.user._id,
         }),
       });
+
       const data = await res.json();
-      if (res.data.success) {
+
+      if (data.success) {
         console.log(data);
         navigate(`/listing/${data._id}`);
       } else {
-        console.log(data);
+        console.error(data.message);
         setError(data.message);
-        console.log(error);
       }
-
-      console.log(data);
-      setLoading(false);
     } catch (error) {
       console.error(error);
       setError(error.message);
+    } finally {
+      setLoading(false); // Ensure loading is set to false after request completion
     }
   };
 
@@ -157,7 +166,7 @@ const CreateListing = () => {
       </h1>
       <form
         action=""
-        onChange={handleSubmit}
+        onSubmit={handleSubmit}
         className="flex flex-col sm:flex-row gap-4"
       >
         <div className="flex flex-col gap-4 flex-1">
@@ -289,22 +298,26 @@ const CreateListing = () => {
                 <p className="text-xs">($/month)</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <input
-                type="number"
-                min="1"
-                required
-                placeholder="discountedPrice"
-                className="border p-3 rounded"
-                id="discountedPrice"
-                onChange={handleFileChange}
-                value={formData.discountedPrice}
-              />
-              <div className="flex flex-col item-center">
-                <span>DiscountedPrice</span>
-                <p className="text-xs">($/month)</p>
-              </div>
-            </div>
+            {formData.offer && (
+              <>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    placeholder="discountedPrice"
+                    className="border p-3 rounded"
+                    id="discountedPrice"
+                    onChange={handleFileChange}
+                    value={formData.discountedPrice}
+                  />
+                  <div className="flex flex-col item-center">
+                    <span>DiscountedPrice</span>
+                    <p className="text-xs">($/month)</p>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
         <div className="flex flex-col flex-1">
@@ -359,7 +372,10 @@ const CreateListing = () => {
                 </button>
               </div>
             ))}
-          <button className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50 mt-5">
+          <button
+            disabled={uploading}
+            className="p-3 text-green-700 border border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-50 mt-5"
+          >
             {loading ? "Loading..." : "Create Listing"}
           </button>
           <p className="text-red-700">{error && error}</p>
