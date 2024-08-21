@@ -57,5 +57,31 @@ const deleteListing = async (req, res) => {
     });
   }
 };
+const updateListing = async (req, res) => {
+  const listing = await ListingModel.findById(req.params.id);
+  if (!listing) {
+    return res.status(404).json({
+      success: false,
+      message: "Listing not found",
+    });
+  }
+  if (req.user.id !== listing.userRef) {
+    return res.status(401).json({
+      success: false,
+      message: "You are not authorized to update this listing",
+    });
+  }
 
-export { CreateListing, deleteListing };
+  try {
+    const updatedListing = await ListingModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    res.status(200).json(updatedListing);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export { CreateListing, deleteListing, updateListing };
