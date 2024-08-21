@@ -4,6 +4,7 @@ import {
   Register,
   Delete,
   google,
+  getUser,
 } from "./../Controllers/UserController.js";
 
 const UserRouter = express.Router();

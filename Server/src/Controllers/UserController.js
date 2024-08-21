@@ -147,32 +147,52 @@ const google = async (req, res) => {
   }
 };
 
-const getUserListings = async (req, res) => {
+const Delete = async (req, res) => {
+  if (req.user.id !== req.params.id) {
+    return res.status(401).json("You can delete only your account");
+  }
   try {
-    // Check if the user is trying to access their own account
-    if (req.user.id !== req.params.id) {
-      return res.status(401).json("You can update only your account"); // Add return to prevent further execution
-    }
-
-    // Fetch user from the database
-    const user = await userModel.find({ userRef: req.params.id });
-
-    // Check if the user exists
-    if (!user) {
-      return res.status(404).json("User not found"); // Add return to prevent further execution
-    }
-
-    // Send user data in the response
-    return res.status(200).json(user);
+    await User.findByIdAndDelete(req.params.id);
+    res.clearCookie("access_token");
+    res.status(200).json("User has been deleted!");
   } catch (error) {
-    // Log the error for debugging
-    console.error("Error fetching user listings:", error);
-
-    // Send internal server error response
-    return res.status(500).json("Internal server error");
+    res.status(500).json(error);
   }
 };
 
-const Delete = async (req, res) => {};
+const getUserListings = async (req, res) => {
+  try {
+    if (req.user.id !== req.params.id) {
+      return res.status(401).json("You can update only your account");
+    }
+
+    const user = await userModel.find({ userRef: req.params.id });
+
+    if (!user) {
+      return res.status(404).json("User not found");
+    }
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error fetching user listings:", error);
+
+    return res.status(500).json("Internal server error");
+  }
+};
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return next(errorHandler(404, "User not found!"));
+    }
+
+    const { password: pass, ...rest } = user._doc;
+
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export { Login, Register, getUserListings, Delete, google };

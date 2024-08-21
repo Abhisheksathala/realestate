@@ -63,32 +63,22 @@ const CreateListing = () => {
   };
 
   const handleFileChange = (e) => {
-    if (e.target.id === "sale" || e.target.id === "rent") {
-      setFormData({
-        ...formData,
-        type: e.target.id,
-      });
-    }
+    const { id, type, checked, value } = e.target;
 
-    if (
-      e.target.id === "parking" ||
-      e.target.id === "furnished" ||
-      e.target.id === "offer"
-    ) {
+    if (id === "sale" || id === "rent") {
       setFormData({
         ...formData,
-        [e.target.id]: e.target.checked,
+        type: id, // Set type based on the checkbox selected
       });
-    }
-
-    if (
-      e.target.type === "number" ||
-      e.target.type === "text" ||
-      e.target.type === "textarea"
-    ) {
+    } else if (type === "checkbox") {
       setFormData({
         ...formData,
-        [e.target.id]: e.target.value,
+        [id]: checked,
+      });
+    } else if (type === "number" || type === "text" || type === "textarea") {
+      setFormData({
+        ...formData,
+        [id]: value,
       });
     }
   };
@@ -117,7 +107,7 @@ const CreateListing = () => {
         },
         body: JSON.stringify({
           ...formData,
-          user: currentUser.user._id,
+          userRef: currentUser.user._id, // Update this line
         }),
       });
 
