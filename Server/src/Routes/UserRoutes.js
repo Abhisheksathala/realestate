@@ -13,6 +13,6 @@ UserRouter.post("/login", Login);
 UserRouter.post("/register", Register);
 UserRouter.post("/google", google);
 // UserRouter.put('/update',Update)
-// UserRouter.delete('/delete',Delete)
+// UserRouter.delete("/delete", Delete);
 
 export default UserRouter;

@@ -29,4 +29,33 @@ const CreateListing = async (req, res) => {
   }
 };
 
-export { CreateListing };
+const deleteListing = async (req, res) => {
+  try {
+    const listing = await ListingModel.findById(req.params.id);
+    if (!listing) {
+      return res.status(404).json({
+        success: false,
+        message: "Listing not found",
+      });
+    }
+    if (req.user.id !== listing.userRef.tostring()) {
+      return res.status(401).json({
+        success: false,
+        message: "You are not authorized to delete this listing",
+      });
+    }
+
+    await ListingModel.findByIdAndDelete(req.params.id);
+    res.status(200).json({
+      success: true,
+      message: "Listing deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export { CreateListing, deleteListing };
