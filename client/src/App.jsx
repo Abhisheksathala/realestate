@@ -28,6 +28,7 @@ const App = () => {
             element={<UpdateListing />}
           />
         </Route>
+        <Route path="/listing:id" element={<listing />} />
       </Routes>
     </div>
   );

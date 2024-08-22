@@ -136,6 +136,7 @@ const CreateListing = () => {
         console.error(data.message);
         setError(data.message);
       }
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       console.error(error);
       setError(error.message);

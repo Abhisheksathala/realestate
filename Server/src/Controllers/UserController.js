@@ -3,6 +3,8 @@ import bcrypt from "bcrypt";
 import userModel from "../Models/UserModel.js";
 import validator from "validator";
 
+import ListingModel from "./../Models/ListingModel.js";
+
 // const CreateToken = (user)=>{
 //   return jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'30d'})
 // }
@@ -152,7 +154,7 @@ const Delete = async (req, res) => {
     return res.status(401).json("You can delete only your account");
   }
   try {
-    await User.findByIdAndDelete(req.params.id);
+    await userModel.findByIdAndDelete(req.params.id);
     res.clearCookie("access_token");
     res.status(200).json("User has been deleted!");
   } catch (error) {
@@ -163,19 +165,21 @@ const Delete = async (req, res) => {
 const getUserListings = async (req, res) => {
   if (req.user.id === req.params.id) {
     try {
-      const user = await userModel.find({ userRef: req.params.id });
-      return res.status(200).json(user);
+      const listings = await ListingModel.find({ userRef: req.params.id });
+      return res.status(200).json(listings);
     } catch (error) {
-      return res.status(500).json("Internal server error", error);
+      return res.status(500).json({ message: "Internal server error", error });
     }
   } else {
-    return res.status(401).json("Unauthorized");
+    return res
+      .status(401)
+      .json({ message: "You can only view your own listings!" });
   }
 };
 
 export const getUser = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await userModel.findById(req.params.id);
 
     if (!user) {
       return next(errorHandler(404, "User not found!"));

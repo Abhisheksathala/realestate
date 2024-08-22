@@ -30,6 +30,8 @@ const Profile = () => {
   const [showListingsError, setShowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
 
+  console.log(userListings);
+
   useEffect(() => {
     if (file) {
       handleFileUpload(file);
