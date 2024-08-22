@@ -107,7 +107,7 @@ const CreateListing = () => {
         },
         body: JSON.stringify({
           ...formData,
-          userRef: currentUser.user._id, // Update this line
+          userRef: currentUser.user._id,
         }),
       });
 
