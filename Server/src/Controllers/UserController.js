@@ -161,24 +161,18 @@ const Delete = async (req, res) => {
 };
 
 const getUserListings = async (req, res) => {
-  try {
-    if (req.user.id !== req.params.id) {
-      return res.status(401).json("You can update only your account");
+  if (req.user.id === req.params.id) {
+    try {
+      const user = await userModel.find({ userRef: req.params.id });
+      return res.status(200).json(user);
+    } catch (error) {
+      return res.status(500).json("Internal server error", error);
     }
-
-    const user = await userModel.find({ userRef: req.params.id });
-
-    if (!user) {
-      return res.status(404).json("User not found");
-    }
-
-    return res.status(200).json(user);
-  } catch (error) {
-    console.error("Error fetching user listings:", error);
-
-    return res.status(500).json("Internal server error");
+  } else {
+    return res.status(401).json("Unauthorized");
   }
 };
+
 export const getUser = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
