@@ -6,6 +6,7 @@ import IndexDb from "./src/DB/IndexDB.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import path from "path";
+
 // Routes imports
 import UserRoutes from "./src/Routes/UserRoutes.js";
 import listingRouter from "./src/Routes/listingRoutes.js";
