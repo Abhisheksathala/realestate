@@ -155,4 +155,6 @@ export const getsearch = async (req, res) => {
   }
 };
 
+export const cook = async (req, res) => {};
+
 export { CreateListing, deleteListing, updateListing, getListing };
