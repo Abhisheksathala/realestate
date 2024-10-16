@@ -1,13 +1,15 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import userModel from "../Models/UserModel.js";
 import validator from "validator";
 
 import ListingModel from "./../Models/ListingModel.js";
 
-// const CreateToken = (user)=>{
-//   return jwt.sign({id:user._id},process.env.JWT_SECRET,{expiresIn:'30d'})
-// }
+const CreateToken = (user) => {
+  return jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+};
 
 const Register = async (req, res) => {
   const { name, password, email } = req.body;
