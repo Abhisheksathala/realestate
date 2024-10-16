@@ -6,7 +6,6 @@ import SwiperCore from "swiper";
 import "swiper/css/bundle";
 import ListingItem from "../components/Listingitem";
 
-
 export default function Home() {
   const [offerListings, setOfferListings] = useState([]);
   const [saleListings, setSaleListings] = useState([]);
@@ -21,6 +20,7 @@ export default function Home() {
         setOfferListings(data);
         fetchRentListings();
       } catch (error) {
+        console.log(error);
         console.log(error);
       }
     };
